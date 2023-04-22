@@ -39,7 +39,7 @@ export default function EditCustomer(props) {
     };
 
     const handleSave = () => {
-        props.updateCustomer(props.params._links.customer.href, customer);
+        props.updateCustomer(props.params.links[0].href, customer);
         setOpen(false);
     }
 

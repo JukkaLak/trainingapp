@@ -24,23 +24,24 @@ function Customerlist(){
         {field: 'city', sortable: true, filter: true},
         {field: 'email', sortable: true, filter: true},
         {field: 'phone', sortable: true, filter: true},
-        {cellRender: params => <EditCustomer updateCustomer={updateCustomer} params={params.data} />,
+        {cellRenderer: params => <EditCustomer updateCustomer={updateCustomer} params={params.data} />,
         width: 120
     },
-    {cellRender: params => <Button size="small" color="error" onClick={() => deleteCustomer(params)}>Delete</Button>, width: 120}  
+    {cellRenderer: params => <Button size="small" color="error" onClick={() => deleteCustomer(params)}>Delete</Button>, width: 120}  
 
     ])
 
+    useEffect(() => {
+        fetch('http://traineeapp.azurewebsites.net/api/customers')
+        .then(response => response.json())
+        .then(data => setCustomers(data.content))
+        .catch(err => console.error(err))
+    }, []);
 
 
 
-useEffect(() => {
-    // Haetaan asiakkaiden tiedot
-    fetch('http://traineeapp.azurewebsites.net/api/customers')
-    .then(response => response.json())
-    .then(data => setCustomers(data._embedded.customers))
-    .catch(err => console.error(err))
-}, []);
+
+
 
 const getCustomers = () => {
     fetch(API_URL)
@@ -51,7 +52,7 @@ const getCustomers = () => {
 
 const deleteCustomer = (params) => {
     if (window.confirm('Are you sure?')){
-        fetch(params.data._links.customer.href, { method: 'DELETE' })
+        fetch(params.data.links[0].href, { method: 'DELETE' })
         .then(response => {
             if (response.ok){
                 setMsg('Customer deleted')
@@ -117,7 +118,7 @@ const deleteCustomer = (params) => {
         open={open}
         autoHideDuration={3000}
         onClose={() => setOpen(false)}
-        message='{msg}'
+        message={msg}
         />
         </>
     );
