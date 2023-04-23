@@ -9,7 +9,7 @@ import  Toolbar from "@mui/material/Toolbar";
 import  Typography from "@mui/material/Typography";
 import AddCustomer from "./AddCustomer";
 import EditCustomer from "./EditCustomer";
-import { API_URL } from "../constants";
+import { API_URL_CUSTOMERS } from "../constants";
 
 function Customerlist(){
     const [customers, setCustomers] = useState([]);
@@ -44,7 +44,7 @@ function Customerlist(){
 
 
 const getCustomers = () => {
-    fetch(API_URL)
+    fetch(API_URL_CUSTOMERS)
     .then(response => response.json())
     .then(data => setCustomers(data._embedded.customers))
     .catch(err => console.error(err))
@@ -68,7 +68,7 @@ const deleteCustomer = (params) => {
 }
 
     const addCustomer = (customer) => {
-        fetch(API_URL, {
+        fetch(API_URL_CUSTOMERS, {
             method: 'POST',
             headers: {'Content-type':'application/json'},
             body: JSON.stringify(customer)
