@@ -15,7 +15,7 @@ export default function EditTraining(props) {
 
     const [open, setOpen] = React.useState(false);
 
-    handleClickOpen = () => {
+    const handleClickOpen = () => {
         setOpen(true);
         setTraining({
             date: props.params.date,

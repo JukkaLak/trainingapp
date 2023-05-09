@@ -10,6 +10,9 @@ import  Typography from "@mui/material/Typography";
 import AddTraining from "./AddTraining";
 import EditTraining from "./EditTraining";
 import { API_URL_TRAININGS } from "../constants";
+import dayjs from "dayjs";
+
+
 
 function TrainingList() {
     const [trainigs, setTrainings] = useState([]);
@@ -17,30 +20,40 @@ function TrainingList() {
     const [msg, setMsg] = useState('');
 
     const [collumnDefs] = useState([
-        {field: 'customer', sortable: true, filter: true},
-        {field: 'date', sortable: true, filter: true},
+        {field: 'date', sortable: true, filter: true,
+        valueFormatter: params => dayjs(params.value).format('DD.MM.YYYY HH:mm')},
         {field: 'duration', sortable: true, filter: true},
         {field: 'activity', sortable: true, filter: true},
+        {field: 'customer', valueGetter: params => {
+            if (params.data.customer != null) { return `${params.data.customer.firstname} ${params.data.customer.lastname}`
+        } else {
+            return ' '
+        }
+        }, sortable: true, filter: true},
         {cellRenderer: params => <EditTraining updateTraining={updateTraining} params={params.data}/>,
         width: 120
     },
+    {cellRenderer: params => <AddTraining addTraining={addTraining} params={params.data}/>,
+    width: 120
+    },
+
     {cellRenderer: params => <Button size="small" color="error" onClick={() => deleteTraining(params)}>Delete</Button>, width: 120}
 
     ])
 
-    useEffect(() => {
-        fetch('http://traineeapp.azurewebsites.net/api/trainings')
-        .then(response => response.json())
-        .then(data => setTrainings(data.content))
-        .catch(err => console.error(err))
-    }, []);
+    useEffect(() => getTrainings(), []);
+        
+    
 
     const getTrainings = () => {
         fetch(API_URL_TRAININGS)
         .then(response => response.json())
-        .then(data = setTrainings(data._embedded.trainigs))
+        .then(data => setTrainings(data))
         .catch(err => console.error(err))
+        
     }
+
+    
 
     const deleteTraining = (params) => {
         if (window.confirm('Are you sure')){
@@ -50,6 +63,7 @@ function TrainingList() {
                     setMsg('Training deleted')
                     setOpen(true);
                     getTrainings();
+                    
                 }
 
                 else
@@ -60,6 +74,7 @@ function TrainingList() {
     }
 
     const addTraining = (training) => {
+        
         fetch(API_URL_TRAININGS, {
             method: 'POST',
             headers: {'Content-type': 'application/json'},
@@ -72,6 +87,7 @@ function TrainingList() {
             alert('Error');
         })
         .catch(err => console.error(err))
+        
     }
 
     const updateTraining = (url, updateTraining) => {

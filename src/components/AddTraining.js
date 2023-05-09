@@ -5,6 +5,10 @@ import  Dialog from '@mui/material/Dialog';
 import  DialogActions from '@mui/material/DialogActions';
 import  DialogContent from '@mui/material/DialogContent';
 import  DialogTitle from '@mui/material/DialogTitle';
+import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+
+
 
 export default function AddTraining(props){
     const [training, setTraining] = React.useState({
@@ -12,6 +16,7 @@ export default function AddTraining(props){
         date: '',
         duration: '',
         activity: ''
+        
 
     })
     const [open, setOpen] = React.useState(false);
@@ -26,29 +31,28 @@ export default function AddTraining(props){
     };
 
     const handleSave = () => {
-        props.AddTraining(training);
+        props.addTraining(training);
         setOpen(false);
-    }
+    };
 
     return (
         <div>
-            <Button variant="outlined" onClick={handleClickOpen}>
-                New Training
+            <Button variant='outlined' onClick={handleClickOpen}>
+                New training
             </Button>
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>Add Training</DialogTitle>
                 <DialogContent>
 
-                    <TextField
-                    
-                    margin="dense"
-                    label="Date"
-                    value={training.date}
-                    onChange={e => setTraining({...training, date: e.target.value})}
-                    type="email"
-                    fullWidth
-                    variant="standard"
-                    />
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DateTimePicker
+                        label="Date"
+                        value={training.date}
+                        onChange={(value) => setTraining({...training, date: value})}
+                        format="DD.MM.YYYY HH.mm"
+                        />
+
+                    </LocalizationProvider>
 
                     <TextField
                     
@@ -72,6 +76,9 @@ export default function AddTraining(props){
                     variant="standard"
                     
                     />
+
+                    
+                    
                 </DialogContent>
                 <DialogActions>
                 <Button onClick={handleClose}>Cancel</Button>
